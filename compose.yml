@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  elastic815:
+    image: elasticsearch:8.15.0
+    container_name: elastic815
+    privileged: true
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - ELASTIC_CONTAINER=true
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - /volume1/docker/elk815/elastic815/config:/usr/share/elasticsearch/config:rw
+      - /volume1/docker/elk815/elastic815/data:/usr/share/elasticsearch/data:rw
+      - /volume1/docker/elk815/elastic815/logs:/usr/share/elasticsearch/logs:rw
+    networks:
+      - elk815
+    ports:
+      - "5997:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  kibana25:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+    container_name: kibana815
+    command: /usr/local/bin/kibana-docker
+    privileged: true
+    environment:
+      - PATH=/usr/share/kibana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - ELASTIC_CONTAINER=true
+      - ELASTICSEARCH_HOSTS=http://elastic25:9200
+    ports:
+      - "5998:5601"
+    volumes:
+      - /volume1/docker/elk815/kibana815/config:/usr/share/kibana/config:rw
+    depends_on:
+      - elastic815
+    networks:
+      - elk815
+    restart: unless-stopped
+    cpu_shares: 50
+
+networks:
+  elk815:
+    driver: bridge
+    external: true
