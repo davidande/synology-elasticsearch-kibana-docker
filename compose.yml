@@ -37,7 +37,7 @@ services:
     environment:
       - PATH=/usr/share/kibana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - ELASTIC_CONTAINER=true
-      - ELASTICSEARCH_HOSTS=http://elastic25:9200
+      - ELASTICSEARCH_HOSTS=http://elastic815:9200
     ports:
       - "5998:5601"
     volumes:
